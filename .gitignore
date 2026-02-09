@@ -2,9 +2,13 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
+/.vscode
 # C extensions
 *.so
+data
+models
+reports
+
 
 # Distribution / packaging
 .Python
