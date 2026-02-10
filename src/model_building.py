@@ -5,6 +5,7 @@ import pickle
 import logging
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.base import BaseEstimator
+import yaml
 
 
 # Ensure the "logs" directory exists
@@ -28,6 +29,17 @@ file_handler.setFormatter(formatter)
 
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
+
+def load_parmas(file_params:str)->dict:
+    try:
+        with open(file_params,"r") as file:
+            parmas=yaml.safe_load(file)
+        logger.debug("load parmas is done")
+        return parmas
+    except Exception as e:
+        logger.error("we have error in load parmas: %s",e)
+        raise
+
 
 def load_data(df_train:pd.DataFrame,df_test:pd.DataFrame)->tuple:
     try:
@@ -69,12 +81,15 @@ def save_model(model,file_path):
     
 def main():
     try:
-        model=RandomForestClassifier(random_state=42,n_estimators=50)
-        df_train=pd.read_csv(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\data\processed\train_tfidf.csv")
-        df_test=pd.read_csv(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\data\processed\test_tfidf.csv")
+        params= load_parmas("params.yaml")
+        radom=params["model_building"]["random_state"]
+        n=params["model_building"]["n_estimators"]
+        model= RandomForestClassifier(random_state=radom,n_estimators=n)
+        df_train=pd.read_csv(r"data\processed\train_tfidf.csv")
+        df_test=pd.read_csv(r"data\processed\test_tfidf.csv")
         x_train,y_train,x_test=load_data(df_train,df_test)
         model=model_train(model=model,x_train=x_train,y_train=y_train)
-        model_path=r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\models/model.pkl"
+        model_path=r"models/model.pkl"
         save_model(model, model_path)
         logger.debug("done")
     except Exception as e:

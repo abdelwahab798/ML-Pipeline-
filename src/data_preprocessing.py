@@ -66,8 +66,8 @@ def save_data(train_data:pd.DataFrame,test_data)->None:
       raise
 
 def main(text_column="text",target_column="target"):
-    train_data=pd.read_csv(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\data\raw\train_data.csv")
-    test_data=pd.read_csv(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\data\raw\test_data.csv")
+    train_data=pd.read_csv(r"data\raw\train_data.csv")
+    test_data=pd.read_csv(r"data\raw\test_data.csv")
     train_data_pro=preprocesing(train_data)
     test_data_pro=preprocesing(test_data)
     save_data(train_data_pro,test_data_pro)

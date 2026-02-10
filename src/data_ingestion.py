@@ -1,6 +1,7 @@
 import pandas as pd 
 import logging 
 import os 
+import yaml
 from sklearn.model_selection import train_test_split
 
 log_dir="logs"
@@ -22,6 +23,17 @@ file_handler.setFormatter(formater)
 
 logger.addHandler(consle_handler)
 logger.addHandler(file_handler)
+
+def load_parmas(file_params:str)->dict:
+    try:
+        with open(file_params,"r") as file:
+            parmas=yaml.safe_load(file)
+        logger.debug("load parmas is done")
+        return parmas
+    except Exception as e:
+        logger.error("we have error in load parmas: %s",e)
+        raise
+
 
 def load_data(data_url:str)->pd.DataFrame:
     try:
@@ -61,7 +73,8 @@ def save_data(trian_data:pd.DataFrame,test_data:pd.DataFrame,data_url:str)->None
 def main():
     try:
         data_path = 'https://raw.githubusercontent.com/vikashishere/Datasets/main/spam.csv'
-        test_size=0.2
+        params=load_parmas("params.yaml")
+        test_size=params["data_ingestion"]["test_size"]
         df=load_data(data_url=data_path)
         df_final=simple_pre(df)
         train_data,test_data=train_test_split(df_final,test_size=test_size,random_state=42)

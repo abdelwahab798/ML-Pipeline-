@@ -4,6 +4,7 @@ import os
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
+import yaml
 
 
 log_dir="logs"
@@ -25,6 +26,16 @@ file_handler.setFormatter(formater)
 
 logger.addHandler(consle_handler)
 logger.addHandler(file_handler)
+
+def load_parmas(file_params:str)->dict:
+    try:
+        with open(file_params,"r") as file:
+            parmas=yaml.safe_load(file)
+        logger.debug("load parmas is done")
+        return parmas
+    except Exception as e:
+        logger.error("we have error in load parmas: %s",e)
+        raise
 
 def transform_x(df_train:pd.DataFrame,df_test:pd.DataFrame,max_features=50)->tuple:
     try:
@@ -62,9 +73,11 @@ def save_data(df:pd.DataFrame,file_path:str):
 
 
 def main():
-    df=pd.read_csv(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\data\interim\processed_train.csv")
-    df2=pd.read_csv(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\data\interim\processed_test.csv")
-    train_df,test_df=transform_x(df,df2,max_features=100)
+    params=load_parmas("params.yaml")
+    max_features=params["feature_engineering"]["max_features"]
+    df=pd.read_csv(r"data\interim\processed_train.csv")
+    df2=pd.read_csv(r"data\interim\processed_test.csv")
+    train_df,test_df=transform_x(df,df2,max_features=max_features)
     save_data(train_df,os.path.join("./data", "processed", "train_tfidf.csv"))
     save_data(test_df,os.path.join("./data", "processed", "test_tfidf.csv"))
     logger.debug("All fuctions is done and data is ready and save")
