@@ -64,7 +64,7 @@ def save_data(df:pd.DataFrame,file_path:str):
 def main():
     df=pd.read_csv(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\data\interim\processed_train.csv")
     df2=pd.read_csv(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\data\interim\processed_test.csv")
-    train_df,test_df=transform_x(df,df2,max_features=50)
+    train_df,test_df=transform_x(df,df2,max_features=100)
     save_data(train_df,os.path.join("./data", "processed", "train_tfidf.csv"))
     save_data(test_df,os.path.join("./data", "processed", "test_tfidf.csv"))
     logger.debug("All fuctions is done and data is ready and save")
