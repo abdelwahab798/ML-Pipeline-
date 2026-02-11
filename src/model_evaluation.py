@@ -5,7 +5,8 @@ import pickle
 import json
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 import logging
-
+from dvclive import Live
+import yaml
 log_dir = 'logs'
 os.makedirs(log_dir, exist_ok=True)
 
@@ -26,6 +27,17 @@ file_handler.setFormatter(formatter)
 
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
+
+def load_params(params_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(params_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logger.debug('Parameters retrieved from %s', params_path)
+        return params
+    except FileNotFoundError:
+        logger.error('File not found: %s', params_path)
+        raise
 
 def load_model(model_path:str,):
     try:
@@ -48,7 +60,7 @@ def load_data():
         logger.error("we have in load data: %s",e)
         raise
 
-def evaluate_model(x_test:pd.DataFrame,y_test:pd.DataFrame,model)->dict:
+def evaluate_model(x_test:pd.DataFrame,y_test:pd.DataFrame,model)->tuple:
     try:
         y_pred = model.predict(x_test)
         y_pred_proba = model.predict_proba(x_test)[:, 1]
@@ -63,7 +75,7 @@ def evaluate_model(x_test:pd.DataFrame,y_test:pd.DataFrame,model)->dict:
             'auc': auc
         }
         logger.debug('Model evaluation metrics calculated')
-        return metrics_dict
+        return y_pred,metrics_dict
     except Exception as e:
         logger.error('Error during model evaluation: %s', e)
         raise
@@ -83,9 +95,16 @@ def save_metrics(metrics: dict, file_path: str) -> None:
 
 def main():
     try:
-        model=load_model(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\models\model.pkl")
+        model=load_model(r"models\model.pkl")
+        params=load_params(r"params.yaml")
         x_test,y_test=load_data()
-        metircs=evaluate_model(x_test,y_test,model)
+        y_pred,metircs=evaluate_model(x_test,y_test,model)
+        with Live(save_dvc_exp=True) as live:
+            live.log_metric('accuracy', accuracy_score(y_test, y_pred))
+            live.log_metric('precision', precision_score(y_test, y_pred))
+            live.log_metric('recall', recall_score(y_test, y_pred))
+            live.log_params(params)
+        
         save_metrics(metircs,'reports/metrics.json')
         logger.debug("all done")
     except Exception as e:
