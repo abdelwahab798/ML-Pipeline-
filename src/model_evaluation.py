@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-import pickle
+import joblib
 import json
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 import logging
@@ -41,8 +41,7 @@ def load_params(params_path: str) -> dict:
 
 def load_model(model_path:str,):
     try:
-        with open(model_path,"rb")as f:
-            model=pickle.load(f)
+        model=joblib.load(model_path)
         logger.debug("Model is loadded")
         return model
     except Exception as e :
@@ -51,7 +50,7 @@ def load_model(model_path:str,):
 
 def load_data():
     try:
-        data_test=pd.read_csv(r"C:\Users\nice\Desktop\Mlops\ML-Pipeline-\data\processed\test_tfidf.csv")
+        data_test=pd.read_csv(r"data\processed\test_tfidf.csv")
         x_test=data_test.drop(columns=["target"])
         y_test=data_test["target"]
         logger.debug("load data is done")

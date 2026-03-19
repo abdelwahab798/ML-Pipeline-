@@ -53,6 +53,7 @@ def preprocesing(df:pd.DataFrame,text_column="text",target_column="target")->pd.
     except Exception as e:
         logger.error("we have error %s",e)
         raise
+    
 def save_data(train_data:pd.DataFrame,test_data)->None:
     try:
         data_path = os.path.join("./data", "interim")

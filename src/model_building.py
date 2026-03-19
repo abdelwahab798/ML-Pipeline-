@@ -1,11 +1,11 @@
 import os
 import numpy as np
 import pandas as pd
-import pickle
 import logging
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.base import BaseEstimator
 import yaml
+import joblib
 
 
 # Ensure the "logs" directory exists
@@ -66,9 +66,7 @@ def save_model(model,file_path):
     try:
         # Ensure the directory exists
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        
-        with open(file_path, 'wb') as file:
-            pickle.dump(model, file)
+        joblib.dump(model, file_path)
         logger.debug('Model saved to %s', file_path)
     except FileNotFoundError as e:
         logger.error('File path not found: %s', e)
@@ -90,7 +88,9 @@ def main():
         x_train,y_train,x_test=load_data(df_train,df_test)
         model=model_train(model=model,x_train=x_train,y_train=y_train)
         model_path=r"models/model.pkl"
+        model_path2=r"deployment/model.pkl"
         save_model(model, model_path)
+        save_model(model,model_path2)
         logger.debug("done")
     except Exception as e:
         logger.error("we have error in main: %s",e)

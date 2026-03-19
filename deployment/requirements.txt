@@ -1,6 +1,9 @@
 fastapi
 uvicorn
 scikit-learn
-pickle
 pydantic
 numpy
+joblib
+spacy
+pandas
+python-multipart

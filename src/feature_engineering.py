@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 import yaml
+import joblib
 
 
 log_dir="logs"
@@ -45,15 +46,21 @@ def transform_x(df_train:pd.DataFrame,df_test:pd.DataFrame,max_features=50)->tup
         y_train=df_train["target"].fillna("").values
         y_test=df_test["target"].values
         logger.debug("spilt data is done")
+
         x_train_vec=tf.fit_transform(x_train)
         x_test_vec=tf.transform(x_test)
         logger.debug("transform data is done")
+
         feature_names = tf.get_feature_names_out()
         final_train=pd.DataFrame(x_train_vec.toarray(),columns=feature_names)
         final_train["target"]=y_train
         final_test=pd.DataFrame(x_test_vec.toarray(),columns=feature_names)
         final_test["target"]=y_test
         logger.debug("New Dataframe is exit")
+
+        joblib.dump(tf,r"deployment\vectorizer.pkl")
+        logger.debug("Vectorizer is saved ")
+
         return final_train,final_test
     except Exception as e:
         logger.exception("we have error: %s",e)
