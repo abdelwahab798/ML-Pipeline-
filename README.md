@@ -21,10 +21,11 @@ Paste any email content and get an instant classification.
 
 | Metric | Score |
 |--------|-------|
-| Accuracy | **94.96%** |
-| Precision | **92.59%** |
-| Recall | **68.03%** |
-| AUC | **90.88%** |
+| Accuracy | **97.70%** |
+| Precision | **94.20%** |
+| Recall | **88.43%** |
+| AUC | **98.46%** |
+| F1 | **91.22%** |
 
 > Model: Random Forest Classifier trained on TF-IDF features with spaCy preprocessing.
 
@@ -157,10 +158,10 @@ data_ingestion:
   test_size: 0.2
 
 feature_engineering:
-  max_features: 50
+  max_features: 500
 
 model_building:
-  n_estimators: 100
+  n_estimators: 50
   random_state: 42
 ```
 
