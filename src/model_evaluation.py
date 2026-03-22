@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import joblib
 import json
-from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score,f1_score
 import logging
 from dvclive import Live
 import yaml
@@ -67,11 +67,14 @@ def evaluate_model(x_test:pd.DataFrame,y_test:pd.DataFrame,model)->tuple:
         precision = precision_score(y_test, y_pred)
         recall = recall_score(y_test, y_pred)
         auc = roc_auc_score(y_test, y_pred_proba)
+        f1= f1_score(y_test, y_pred)
+
         metrics_dict = {
             'accuracy': accuracy,
             'precision': precision,
             'recall': recall,
-            'auc': auc
+            'auc': auc,
+            'f1': f1
         }
         logger.debug('Model evaluation metrics calculated')
         return y_pred,metrics_dict
