@@ -105,6 +105,8 @@ def main():
             live.log_metric('accuracy', accuracy_score(y_test, y_pred))
             live.log_metric('precision', precision_score(y_test, y_pred))
             live.log_metric('recall', recall_score(y_test, y_pred))
+            live.log_metric('auc', roc_auc_score(y_test, model.predict_proba(x_test)[:, 1]))
+            live.log_metric('f1', f1_score(y_test, y_pred))
             live.log_params(params)
         
         save_metrics(metircs,'reports/metrics.json')
